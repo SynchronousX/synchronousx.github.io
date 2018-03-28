@@ -13,14 +13,14 @@
     "url": "git+https://github.com/SynchronousX/synchronousx.github.io.git"
   },
   "scripts": {
-    "clean:css": "rimraf build/assets/css",
-    "clean:js": "rimraf build/assets/js",
-    "clean": "rimraf build",
-    "build:scss": "node scripts/build-scss.js",
-    "build:css": "node scripts/build-css.js",
-    "build:js": "node scripts/build-js.js",
-    "build:other": "node scripts/copy-files.js",
-    "build": "npm run build:scss && npm run build:css && npm run build:js && npm run build:other"
+    "clean:css": "rimraf dist/**/assets/**/css",
+    "clean:js": "rimraf dist/**/assets/**/js",
+    "clean": "rimraf dist",
+    "build:sass": "node build-scripts/build-sass.js",
+    "build:css": "node build-scripts/build-css.js",
+    "build:js": "node build-scripts/build-js.js",
+    "build:other": "node build-scripts/copy-files.js",
+    "build": "npm run build:sass && npm run build:css && npm run build:js && npm run build:other"
   },
   "private": true,
   "devDependencies": {
@@ -31,6 +31,7 @@
     "node-sass": "^4.7.2",
     "postcss": "^6.0.11",
     "rimraf": "^2.6.2",
-    "uglify-js": "^3.1.2"
-  }
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {}
 }
