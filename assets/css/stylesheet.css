@@ -1,3 +1,7 @@
 .logo {
     max-width: 4.5em;
 }
+
+.script {
+    display: table;
+}
