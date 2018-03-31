@@ -2,7 +2,7 @@
 // @name SpanishDict Multiple Choice Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to multiple choice questions on SpanishDict quizzes.
-// @version 1.0.0
+// @version 1.0.1
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
@@ -29,7 +29,7 @@
     const buttonText = 'Show Answer';
     const buttonClass = 'button--3u7px';
     const onButtonClick = function() {
-        showAnswer(getCorrectAnswerElement(getQuestion(quizData, getQuestionNumber(valueClass, questionNumberPattern)), answersClass), defaultAnswerClass, correctAnswerClass);
+        showAnswer(getCorrectAnswerElement(getCorrectAnswerIndex(getQuestion(quizData, getQuestionNumber(valueClass, questionNumberPattern))), answersClass), defaultAnswerClass, correctAnswerClass);
     };
 
     const buttonContainerClass = 'innerContainer--3JR02';
@@ -49,9 +49,28 @@
         return quizData.questions[questionID];
     }
 
-    function getCorrectAnswerElement(question, answersClass) {
-        const answerID = question.answerDisplayIndexes.indexOf(0);
-        return document.getElementsByClassName(answersClass)[0].children[answerID];
+    function getCorrectAnswerIndex(question) {
+        const answerIndices = new Set();
+        for (let i = 1; i < 5; ++i) {
+            if (question['incorrectAnswer' + i]) {
+                answerIndices.add(i);
+            }
+        }
+
+        let correctAnswerIndex = 0;
+        for (const answerIndex of question.answerDisplayIndexes) {
+            if (!answerIndex) {
+                return correctAnswerIndex;
+            }
+
+            if (answerIndices.has(answerIndex)) {
+                correctAnswerIndex += 1;
+            }
+        }
+    }
+
+    function getCorrectAnswerElement(correctAnswerIndex, answersClass) {
+        return document.getElementsByClassName(answersClass)[0].children[correctAnswerIndex];
     }
 
     function showAnswer(correctAnswerElement, defaultAnswerClass, correctAnswerClass) {
