@@ -2,7 +2,7 @@
 // @name Hypixel Daily Reward Ad Skipper
 // @namespace https://synchronousx.github.io/
 // @description Skip the video ad appearing when claiming your daily reward.
-// @version 2.0.0
+// @version 2.0.1
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
