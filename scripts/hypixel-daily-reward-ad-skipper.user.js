@@ -2,7 +2,7 @@
 // @name Hypixel Daily Reward Ad Skipper
 // @namespace https://synchronousx.github.io/
 // @description Skip the video ad appearing when claiming your daily reward.
-// @version 1.0.0
+// @version 2.0.0
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
@@ -10,42 +10,39 @@
 // @updateURL https://synchronousx.github.io/scripts/hypixel-daily-reward-ad-skipper.meta.js
 // @downloadURL https://synchronousx.github.io/scripts/hypixel-daily-reward-ad-skipper.user.js
 // @supportURL https://github.com/SynchronousX/synchronousx.github.io/issues
+// @run-at document-start
 // @match *://rewards.hypixel.net/claim-reward/*
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    function removeElements(selector) {
-        const elements = document.querySelectorAll(selector);
-        for (const element of elements) {
-            element.parentNode.removeChild(element);
+    const skipButtonClass = 'index__skipButton___3ihHt';
+
+    defer(function() {
+        const appData = JSON.parse(window.appData);
+        if (!appData.skippable) {
+            appData.skippable = true;
+            window.appData = JSON.stringify(appData);
+        }
+    }, function() {
+        return window.appData;
+    }, 0);
+
+    defer(function() {
+        document.getElementsByClassName(skipButtonClass)[0].click();
+    }, function() {
+        const iframes = document.getElementsByTagName('iframe');
+        return iframes.length && YT.get(iframes[0].id).pauseVideo;
+    }, 0);
+
+    function defer(func, conditionFunc, interval) {
+        if (conditionFunc()) {
+            func();
+        } else {
+            setTimeout(function() {
+                defer(func, conditionFunc, interval);
+            }, interval);
         }
     }
-
-    function removeBodyDivs() {
-        removeElements('body > div');
-    }
-
-    function removeScripts(srcPattern) {
-        const scripts = document.getElementsByTagName('script');
-        for (const script of scripts) {
-            if (script.src.match(srcPattern) !== null) {
-                script.remove();
-            }
-        }
-    }
-
-    function insertScript(src) {
-        const script = document.createElement('script');
-        script.src = src;
-        document.body.appendChild(script);
-    }
-
-    const targetSrcPattern = /app\.js(\?v=)?.*/;
-    const newSrc = 'https://cdn.rawgit.com/SynchronousX/7646b731830a8f9289eb87dc815af89c/raw/1912039f12f6608f937d48bbcfb4a94a27750906/app.js';
-
-    removeScripts(targetSrcPattern);
-    removeBodyDivs();
-    insertScript(newSrc);
 })();
