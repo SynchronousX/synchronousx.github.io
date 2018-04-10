@@ -2,7 +2,7 @@
 // @name SpanishDict Multiple Choice Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to multiple choice questions on SpanishDict quizzes.
-// @version 1.0.1
+// @version 1.1.0
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT

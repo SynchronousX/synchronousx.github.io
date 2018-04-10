@@ -2,7 +2,7 @@
 // @name SpanishDict Multiple Choice Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to multiple choice questions on SpanishDict quizzes.
-// @version 1.0.1
+// @version 1.1.0
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
@@ -36,6 +36,17 @@
 
     const button = createButton(buttonText, buttonClass, onButtonClick);
     insertButton(button, buttonContainerClass);
+
+    const resultMessageSelector = 'h2.title--MrNvJ';
+    const percentCorrectClass = 'number--3tdOb';
+    const percentCorrectProgressBarClass = 'CircularProgressbar-path';
+    const percentCorrectProgressBarStrokeDasharray = 304.735;
+
+    window.setScore = function(percentCorrect) {
+        document.querySelector(resultMessageSelector).textContent = getResultMessage(percentCorrect);
+        document.getElementsByClassName(percentCorrectClass)[0].textContent = percentCorrect + '%';
+        document.getElementsByClassName(percentCorrectProgressBarClass)[0].style.strokeDashoffset = percentCorrectProgressBarStrokeDasharray * (1 - percentCorrect / 100) + 'px';
+    }
 
     function getQuestionNumber(valueClass, questionNumberPattern) {
         const valueElements = document.getElementsByClassName(valueClass);
@@ -89,5 +100,9 @@
 
     function insertButton(button, parentClass) {
         document.getElementsByClassName(parentClass)[0].appendChild(button);
+    }
+
+    function getResultMessage(percentCorrect) {
+        return percentCorrect === 100 ? '¡Perfecto!' : percentCorrect >= 80 ? '¡Bien hecho!' : percentCorrect >= 60 ? '¡Nada mal!' : '¡Sigue practicando!';
     }
 })();
