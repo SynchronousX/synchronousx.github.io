@@ -2,7 +2,7 @@
 // @name SpanishDict Multiple Choice Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to multiple choice questions on SpanishDict quizzes.
-// @version 1.1.0
+// @version 1.2.0
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
@@ -46,7 +46,28 @@
         document.querySelector(resultMessageSelector).textContent = getResultMessage(percentCorrect);
         document.getElementsByClassName(percentCorrectClass)[0].textContent = percentCorrect + '%';
         document.getElementsByClassName(percentCorrectProgressBarClass)[0].style.strokeDashoffset = percentCorrectProgressBarStrokeDasharray * (1 - percentCorrect / 100) + 'px';
-    }
+    };
+
+    const resultContainerClass = 'textWrapper--7M6Lb';
+    const scoreInput = document.createElement('input');
+    scoreInput.type = 'number';
+    scoreInput.style.position = 'absolute';
+    scoreInput.style.top = 0;
+    scoreInput.style.bottom = 0;
+    scoreInput.style.left = 0;
+    scoreInput.style.right = 0;
+    scoreInput.style.height = '1em';
+    scoreInput.style.width = '5em';
+    scoreInput.style.margin = 'auto';
+    scoreInput.style.textAlign = 'center';
+    scoreInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+            hideScoreInput();
+            setScore(parseInt(scoreInput.value));
+        }
+    });
+    let scoreInputVisible = false;
+    bindDoubleClickEvent();
 
     function getQuestionNumber(valueClass, questionNumberPattern) {
         const valueElements = document.getElementsByClassName(valueClass);
@@ -104,5 +125,37 @@
 
     function getResultMessage(percentCorrect) {
         return percentCorrect === 100 ? '¡Perfecto!' : percentCorrect >= 80 ? '¡Bien hecho!' : percentCorrect >= 60 ? '¡Nada mal!' : '¡Sigue practicando!';
+    }
+
+    function bindDoubleClickEvent() {
+        function onDoubleClick() {
+            const resultContainers = document.getElementsByClassName(resultContainerClass);
+            if (resultContainers.length > 0) {
+                resultContainers[0].ondblclick = showScoreInput;
+            } else {
+                setTimeout(onDoubleClick);
+            }
+        }
+
+        onDoubleClick();
+    }
+
+    function showScoreInput() {
+        if (!scoreInputVisible) {
+            const resultContainer = document.getElementsByClassName(resultContainerClass)[0];
+            resultContainer.childNodes.forEach(childNode => childNode.style.visibility = 'hidden');
+            resultContainer.appendChild(scoreInput);
+            scoreInput.focus();
+            scoreInputVisible = true;
+        }
+    }
+
+    function hideScoreInput() {
+        if (scoreInputVisible) {
+            const resultContainer = document.getElementsByClassName(resultContainerClass)[0];
+            resultContainer.removeChild(scoreInput);
+            resultContainer.childNodes.forEach(childNode => childNode.style.visibility = '');
+            scoreInputVisible = false;
+        }
     }
 })();
