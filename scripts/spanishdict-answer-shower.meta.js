@@ -2,7 +2,7 @@
 // @name SpanishDict Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to questions on SpanishDict quizzes.
-// @version 1.3.0
+// @version 1.3.1
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT

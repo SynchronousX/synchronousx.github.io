@@ -2,7 +2,7 @@
 // @name SpanishDict Answer Shower
 // @namespace https://synchronousx.github.io/
 // @description Show the answers to questions on SpanishDict quizzes.
-// @version 1.3.0
+// @version 1.3.1
 // @author Synchronous
 // @copyright 2018+, Synchronous
 // @license MIT
@@ -45,7 +45,7 @@
         switch (getQuestionType(question)) {
             case multipleChoiceType:
                 multipleChoiceAnswersClass = getClassByItsPrefix('answers--', 'ol');
-                defaultMultipleChoiceAnswerClass = getClassByItsPrefix('notSelected--', 'button').split(' ')[0];
+                defaultMultipleChoiceAnswerClass = getClassByItsPrefix('notSelected--', 'button');
                 correctMultipleChoiceAnswerClass = getCorrectMultipleChoiceAnswerClassFromStylesheets();
                 showCorrectMultipleChoiceAnswer(getCorrectMultipleChoiceAnswerElement(getCorrectMultipleChoiceAnswerIndex(question), multipleChoiceAnswersClass), defaultMultipleChoiceAnswerClass, correctMultipleChoiceAnswerClass);
                 break;
@@ -67,12 +67,14 @@
     const percentCorrectProgressBarStrokeDasharray = 304.735;
 
     window.setScore = function(percentCorrect) {
-        document.getElementsByClassName(getClassByItsPrefix('title--', 'h2'))[0].textContent = getResultMessage(percentCorrect);
+        document.getElementsByClassName(getClassByItsPrefix('title--', 'h2'))[1].textContent = getResultMessage(percentCorrect);
         document.getElementsByClassName(getClassByItsPrefix('number--', 'div'))[0].textContent = percentCorrect + '%';
         document.getElementsByClassName(getClassByItsPrefix('CircularProgressbar-path', 'path'))[0].style.strokeDashoffset = percentCorrectProgressBarStrokeDasharray * (1 - percentCorrect / 100) + 'px';
     };
 
     let resultContainerClass;
+    setResultContainerClassOnResultsShown();
+
     const scoreInput = document.createElement('input');
     scoreInput.type = 'number';
     scoreInput.style.position = 'absolute';
@@ -91,13 +93,12 @@
         }
     });
     let scoreInputVisible = false;
-    bindDoubleClickEvent();
 
     function getClassByItsPrefix(classPrefix, selector = '*') {
         let matchedClass;
         document.querySelectorAll(selector).forEach(element => {
-            if (element.className.startsWith(classPrefix)) {
-                matchedClass = element.className;
+            if (element.classList && element.classList.length > 0 && element.classList[0].startsWith(classPrefix)) {
+                matchedClass = element.classList[0];
             }
         });
 
@@ -253,12 +254,15 @@
     }
 
     function showCorrectShortAnswerAnswer(correctAnswerText) {
-        const outerSpanElement = document.createElement('span');
-        document.getElementsByClassName(inputBoxClass)[0].appendChild(outerSpanElement);
-        outerSpanElement.className = correctionClass;
-        const innerSpanElement = document.createElement('span');
-        outerSpanElement.appendChild(innerSpanElement);
-        innerSpanElement.textContent = correctAnswerText;
+        const correctionElements = document.getElementsByClassName(correctionClass);
+        if (!correctionElements.length) {
+            const outerSpanElement = document.createElement('span');
+            document.getElementsByClassName(inputBoxClass)[0].appendChild(outerSpanElement);
+            outerSpanElement.className = correctionClass;
+            const innerSpanElement = document.createElement('span');
+            outerSpanElement.appendChild(innerSpanElement);
+            innerSpanElement.textContent = correctAnswerText;
+        }
     }
 
     function createButton(text, className, onClick) {
@@ -282,27 +286,30 @@
         });
     }
 
+    function setResultContainerClassOnResultsShown() {
+        const resultModalContainer = document.getElementsByClassName('ReactModalPortal')[0];
+        new MutationObserver((mutations, observer) => {
+            resultContainerClass = getClassByItsPrefix('textWrapper--', 'div');
+            bindDoubleClickEvent();
+            observer.disconnect();
+        }).observe(resultModalContainer, {
+            childList: true
+        });
+    }
+
     function getResultMessage(percentCorrect) {
         return percentCorrect === 100 ? '¡Perfecto!' : percentCorrect >= 80 ? '¡Bien hecho!' : percentCorrect >= 60 ? '¡Nada mal!' : '¡Sigue practicando!';
     }
 
     function bindDoubleClickEvent() {
-        function onDoubleClick() {
-            const resultContainers = document.getElementsByClassName(resultContainerClass);
-            if (resultContainers.length > 0) {
-                resultContainers[0].ondblclick = showScoreInput;
-            } else {
-                setTimeout(onDoubleClick);
-            }
-        }
-
-        resultContainerClass = getClassByItsPrefix('textWrapper--', 'div');
-        onDoubleClick();
+        document.getElementsByClassName(resultContainerClass)[0].ondblclick = showScoreInput;
     }
 
     function showScoreInput() {
         if (!scoreInputVisible) {
             const resultContainer = document.getElementsByClassName(resultContainerClass)[0];
+            console.log(resultContainer);
+            console.log('show');
             resultContainer.childNodes.forEach(childNode => childNode.style.visibility = 'hidden');
             resultContainer.appendChild(scoreInput);
             scoreInput.focus();
@@ -313,6 +320,8 @@
     function hideScoreInput() {
         if (scoreInputVisible) {
             const resultContainer = document.getElementsByClassName(resultContainerClass)[0];
+            console.log(resultContainer);
+            console.log('hide');
             resultContainer.removeChild(scoreInput);
             resultContainer.childNodes.forEach(childNode => childNode.style.visibility = '');
             scoreInputVisible = false;
