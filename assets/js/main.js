@@ -1,0 +1,1 @@
+!function(){"use strict";const e=document.getElementsByClassName("script");for(const t of e)t.href=t.dataset.src,t.href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='"+t.href+"';})();",t.addEventListener("click",function(e){window.open(t.dataset.src,"_blank"),e.preventDefault()})}();
